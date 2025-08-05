@@ -2,7 +2,7 @@
 
 🚀 This project helps **content creators generate professional video scripts** using AI automation — entirely built with **n8n** and **free public APIs** (Perplexity, Wikipedia, and Email).
 
-![UI Screenshot](assets/ui-screenshot.png)
+![UI Screenshot](assets/ui-screenshot.jpg)
 
 ---
 
