@@ -1,0 +1,283 @@
+{
+  "name": "My workflow 2",
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "373f29b6-dd49-4d47-8d35-8faba74de538",
+              "name": "=Script",
+              "value": "={{ $json[\"choices\"][0][\"message\"][\"content\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "08c3204a-cd10-4719-82eb-c5ecd147ab74",
+              "name": "=citations",
+              "value": "={{ $json[\"citations\"] ? $json[\"citations\"].join(\"\\n\") : \"No citations provided.\" }}",
+              "type": "string"
+            },
+            {
+              "id": "1d3fa6f8-9e8f-47e9-90c2-7d82ec55b1ed",
+              "name": "=useremail",
+              "value": "={{$item(1).$json.useremail}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1216,
+        -128
+      ],
+      "id": "8fa412bc-5a33-42d7-b347-a267848451de",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6886ed77-215a-4d71-a5ea-13bcd7a03cb4",
+              "name": "useremail",
+              "value": "={{$item(1).$json.useremail}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {
+          "dotNotation": false
+        }
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1312,
+        720
+      ],
+      "id": "1fc2dac3-6176-4a76-9b59-fc58053f11c7",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"script\": $item(0).$json.choices[0].message.content } }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        1504,
+        240
+      ],
+      "id": "78767cea-400d-453e-9440-b54191376a8b",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "89d917f1-57fc-4581-b3bb-21e54c1c6d8a",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        528,
+        144
+      ],
+      "id": "9d872ff6-c7e0-471b-ac03-f79e5e0ac653",
+      "name": "Webhook1trigger",
+      "webhookId": "89d917f1-57fc-4581-b3bb-21e54c1c6d8a"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "fc067c0a-f01b-4f27-967f-d79b0470921f",
+              "name": "topic",
+              "value": "={{$json[\"body\"][\"topic\"]}}",
+              "type": "string"
+            },
+            {
+              "id": "426a72f5-cd87-4770-bfe0-a6667db1d515",
+              "name": "audience",
+              "value": "={{$json[\"body\"][\"audience\"]}}",
+              "type": "string"
+            },
+            {
+              "id": "bc6b2bfb-f46e-495d-8eba-1e6f002e0537",
+              "name": "tone",
+              "value": "={{$json[\"body\"][\"tone\"]}}",
+              "type": "string"
+            },
+            {
+              "id": "a2f40a21-771d-413b-9023-5158eea4f473",
+              "name": "length",
+              "value": "={{$json[\"body\"][\"length\"]}}",
+              "type": "string"
+            },
+            {
+              "id": "88bdf1ef-ecb7-4605-b14e-55d4da355bc7",
+              "name": "useremail",
+              "value": "={{ $json.body.userEmail }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        752,
+        144
+      ],
+      "id": "cbef8af0-8631-4daf-8c3a-d0f79b817161",
+      "name": "Fieldsfromwebhook"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.perplexity.ai/chat/completions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer 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"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"sonar-pro\",\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You are a video script writing assistant. Your job is to generate engaging and informative scripts for YouTube content creators. BY providing indepth research on the topic with statistical analysis also \"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"Create a {{ $json['length'] }} script in a {{ $json['tone'] }} tone for an audience of {{ $json['audience'] }}. The topic is {{ $json['topic'] }}. Include an intro, main content, and conclusion. Include details of useremail which is {{ $json.useremail }} \"\n    }\n  ],\n  \"temperature\": 0.7,\n  \"max_tokens\": 1000\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        960,
+        -32
+      ],
+      "id": "76bfc6c1-15c8-4e19-a8fa-212aec951387",
+      "name": "AI script generator"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1168,
+        128
+      ],
+      "id": "da8a2352-914b-48c8-bedd-796ff758b141",
+      "name": "Mergenode"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{$item(1).$json.useremail}}",
+        "subject": "Subject",
+        "emailType": "text",
+        "message": "={{$item(0).$json.choices[0].message.content}}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1504,
+        0
+      ],
+      "id": "c3ec22d0-3618-4c02-b35d-26fdc85d87c6",
+      "name": "Sendemailtouser",
+      "webhookId": "fbe73779-6f63-43e3-a759-c22a1311cdcb",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "pbsoJVhtbbeDat9P",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Edit Fields1": {
+      "main": [
+        []
+      ]
+    },
+    "Webhook1trigger": {
+      "main": [
+        [
+          {
+            "node": "Fieldsfromwebhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fieldsfromwebhook": {
+      "main": [
+        [
+          {
+            "node": "AI script generator",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Mergenode",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "AI script generator": {
+      "main": [
+        [
+          {
+            "node": "Mergenode",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mergenode": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Sendemailtouser",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "df2ce985-0632-414d-98d3-f3abe0f654c2",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "ec9757f9e56911244d826d39246251b29edf85b3a576012db785e0d70709a7a3"
+  },
+  "id": "FRDvynTlbavSEGwc",
+  "tags": []
+}
